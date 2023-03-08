@@ -39,6 +39,11 @@ class ALiquidXTestAppCharacter : public ACharacter
 
 public:
 	ALiquidXTestAppCharacter();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		bool IsJetPackActive();
+	UFUNCTION(BlueprintCallable)
+		void JetPackState(bool bisActive);
 	
 
 protected:

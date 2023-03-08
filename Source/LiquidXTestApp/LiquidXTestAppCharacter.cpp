@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFeaturesSubsystem.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -51,11 +52,34 @@ ALiquidXTestAppCharacter::ALiquidXTestAppCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+bool ALiquidXTestAppCharacter::IsJetPackActive()
+{
+	FString OutPluginURL;
+	UGameFeaturesSubsystem::Get().GetPluginURLByName(TEXT("JetPack"), OutPluginURL);
+	bool PluginState = UGameFeaturesSubsystem::Get().IsGameFeaturePluginActive(OutPluginURL, false);
+	return PluginState;
+}
+
+void ALiquidXTestAppCharacter::JetPackState(bool bisActive)
+{
+	FString OutPluginURL;
+	UGameFeaturesSubsystem::Get().GetPluginURLByName(TEXT("JetPack"), OutPluginURL);
+	if (!bisActive) {
+	UGameFeaturesSubsystem::Get().DeactivateGameFeaturePlugin(OutPluginURL);
+		
+	}
+	else
+	{
+		UGameFeaturesSubsystem::Get().LoadAndActivateGameFeaturePlugin(OutPluginURL,nullptr);
+	}
+	
+	
+}
 void ALiquidXTestAppCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	JetPackState(false);
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -75,8 +99,10 @@ void ALiquidXTestAppCharacter::SetupPlayerInputComponent(class UInputComponent* 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		InputComponent->BindAction("DoubleJump", IE_Pressed, this, &ThisClass::Jump);
+		InputComponent->BindAction("DoubleJump", IE_Released, this, &ThisClass::StopJumping);
 
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALiquidXTestAppCharacter::Move);

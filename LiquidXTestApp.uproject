@@ -33,6 +33,14 @@
 		{
 			"Name": "GrabFeature",
 			"Enabled": true
+		},
+		{
+			"Name": "DoubleJump",
+			"Enabled": true
+		},
+		{
+			"Name": "JetPack",
+			"Enabled": true
 		}
 	]
 }
